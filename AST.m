@@ -1,27 +1,34 @@
 classdef AST < handle
     %AST Apparent Solar Time
-    %    G�r�nen G�ne� Zaman�n� hesaplayan s�n�f.
-    %    Bu s�n�fta hesaplanan de�er, Saat A��s�s�'n� (Hour Angle) hesaplamak
-    %    i�in gerekli.
+    %    Görünen Güneş Zamanı'nı hesaplayan sınıf.
+    %    Bu sınıfta hesaplanan değer, Saat Açısısı'nı (Hour Angle) hesaplamak
+    %    için gerekli.
+    
+    %    Formül       -> AST = LST + ET (+-) 4(SL-LL) - DS
+    %    LST          -> Local Standart Time
+    %    ET           -> Equation Of Time
+    %    SL           -> Standart Longitude
+    %    LL           -> Local Longitude
+    %    DS           -> Daylight Saving
+    %    (+-)4(SL-LL) -> Longitude Correction
     
     properties
         Tool = Tools();
-        AstFloat; %Float value of ast
-        AstTime;  %Time value of ast
-        EquationOfTime;
-        LocalStandardTime;
-        StandardLongitude;
-        LocalLongitude;
+        AstFloat; %İşlemler sonucu hesaplanan AST değerinin -ondalıklı- olarak tutulacağı değişken
+        AstTime;  %İşlemler sonucu hesaplanan AST değerinin -zaman- olarak tutulacağı değişken
+        EquationOfTime; 
+        LocalStandardTime; 
+        StandardLongitude; 
+        LocalLongitude; 
         LongitudeCorrection;
         Date;
-        DayOfTheYear;
-        DaylightSaving = false;
+        DayOfTheYear; %EquationTime değeri hesaplanırken ihtiyaç duyulan B değerini hesaplarken ihtiyacımız olacak.
+        DaylightSaving = false; %yaz saati uygulaması. Hesaplamalar bu değer göz önüne alınmadan yapıldı
     end
     
     methods
         function obj = AST(location)
-            %AST Construct an instance of this class
-            %   Detailed explanation goes here
+            %Bu sınıfın çalışabilmesi için location nesnesine ihtiyaç vardır.
             obj.Date = location.Date;
             obj.LocalStandardTime = obj.Tool.String2Time(location.Time);
             obj.StandardLongitude = location.TimeZone * 15;
@@ -39,22 +46,24 @@ classdef AST < handle
         end
         
         function [] = CalculateLongitudeCorrection(obj)
-            %4'�n �n�ndeki i�aret konum greenwich'in do�usundaysa - (eksi)
-            %bat�s�nda ise + (art�) olmal�
+            % (+-)4(SL-LL)
              obj.LongitudeCorrection= -4*(obj.StandardLongitude - obj.LocalLongitude);
         end
         
         function [] = CalculateEquationOfTime(obj)
-            %B fonsiyonu yard�m�yla hesaplanan de�eri baz alarak zaman denklemini hesaplar.
+            % ET = 9.87 sin(2B) - 7.53 cos(B) - 1.5 sin(B) [min]
             B = obj.CalculateB();
             obj.EquationOfTime = 9.87*sind(2*B) - 7.53*cosd(B) - 1.5*sind(B);
         end
         
         function b = CalculateB(obj)
+            % B = (N - 81) * 360/364 
+            % N -> Belirtilen tarihin yılın kaçıncı günü olduğudur.
             b = (obj.DayOfTheYear - 81) * (360 / 364);
         end
         
         function [] = SetDayOfTheYear(obj)
+            % Tarihin yılın kaçıncı günü olduğunu hesaplar
             obj.DayOfTheYear = obj.Tool.DayOfTheYearFromGivenDate(obj.Date);
         end
 
