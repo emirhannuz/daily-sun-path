@@ -1,12 +1,13 @@
 classdef Tools
-    %TOOLS Yard�mc� Fonksiyonlar� bar�nd�ran s�n�f
-    
+    %TOOLS Yardımcı Fonksiyonları barındıran sınıf
+    % https://www.mathworks.com/help/matlab/date-and-time-operations.html
     properties
         
     end
     
     methods
         function dayOfTheYear = DayOfTheYearFromGivenDate(obj, date)
+            % String olarak gönderilen tarihin yılın kaçıncı gününe denk geldiğini hesaplar.
             splitedDate = split(date, "/");
             dayInt = str2num(splitedDate(1));
             monthInt = str2num(splitedDate(2));
@@ -16,15 +17,18 @@ classdef Tools
         end   
         
         function time = String2Time(obj, strTime)
+            % String bir değeri Zamana çevirir.
             dtv = datevec(datetime(strTime,'InputFormat','HH:mm'));
             time = duration(dtv(:,4:end));
         end
         
         function time = Number2Minute(obj, numberTime)
+            % Sayıyı zamana çevirir.
             time = duration(minutes(numberTime), 'format', 'hh:mm');
         end
         
         function floatValue = Time2Float(obj, time)
+            % Zamanını ondalıklı sayıya çevirir.
             dtv = datevec(time);
             neededPart = dtv(4:5);
             if neededPart(2) < 0
@@ -36,6 +40,7 @@ classdef Tools
         end
         
         function float = TimeMapping(obj, time)
+            % Zaman tipindeki bir değeri Ondalıklı sayıya çevirir.
             value = obj.Time2Float(time);
             integerValue = floor(value);
             floatPart = value - integerValue;
@@ -45,6 +50,7 @@ classdef Tools
         end
         
         function value = MapIt(obj, val, inMin, inMax, outMin, outMax)
+            % belirtilen aralıkta verilmiş değerin belirtilen başka bir aralıkta ki değerini hesaplar
             value = (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
         end
         
