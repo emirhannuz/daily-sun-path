@@ -7,8 +7,10 @@ classdef Tools
     
     methods
         function dayOfTheYear = DayOfTheYearFromGivenDate(obj, date)
-            % String olarak gönderilen tarihin yılın kaçıncı gününe denk geldiğini hesaplar.
-            splitedDate = split(date, "/");
+            % DD/MM/YYYY formatında olduğu kabul edilen string bir değerin yılın kaçıncı gününe 
+            % denk geldiğini hesaplayan fonksiyon
+            splitedDate = split(date, "/"); % split fonksiyonu gönderilen stringi 
+            % belirtilen ayraç baz alınarak parçalara böler ve geriye bir dizi döndürür.
             dayInt = str2num(splitedDate(1));
             monthInt = str2num(splitedDate(2));
             yearInt = str2num(splitedDate(3));
@@ -17,7 +19,12 @@ classdef Tools
         end   
         
         function time = String2Time(obj, strTime)
-            % String bir değeri Zamana çevirir.
+            % strTime -> HH:mm formatında bir string değer olmalı.
+            % String bir değeri belirtilen formatta Zamana çevirir.
+            % Belirttiğimiz format (:) nokta ile ayrılmış olduğunu ve
+            % sadece saat ve dakika kısmınının belirtildiğini söylüyor..
+            % Matlab içerisinde hazır gelen fonksiyonlar ilede string değerimizi 
+            % zamana çevirmiş oluyoruz.
             dtv = datevec(datetime(strTime,'InputFormat','HH:mm'));
             time = duration(dtv(:,4:end));
         end
@@ -32,6 +39,9 @@ classdef Tools
             dtv = datevec(time);
             neededPart = dtv(4:5);
             if neededPart(2) < 0
+                % değer sıfırdan küçükse ondalıklı sayı yapmadan önce önüne eksi işareti ekliyoruz.
+                % Bu kısım olmadığı takdirde fonksiyon her zaman pozitif bir sonuç verir. 
+                % Bu da istediğimiz bir şey değildir.
                 joinedWithDot = '-' + join(string(abs(neededPart)), '.');
             else
                 joinedWithDot = join(string(neededPart), '.');
@@ -40,7 +50,7 @@ classdef Tools
         end
         
         function float = TimeMapping(obj, time)
-            % Zaman tipindeki bir değeri Ondalıklı sayıya çevirir.
+            % Zaman tipindeki değerin 0,99 aralığındaki karşılığını hesaplar.
             value = obj.Time2Float(time);
             integerValue = floor(value);
             floatPart = value - integerValue;
@@ -50,7 +60,8 @@ classdef Tools
         end
         
         function value = MapIt(obj, val, inMin, inMax, outMin, outMax)
-            % belirtilen aralıkta verilmiş değerin belirtilen başka bir aralıkta ki değerini hesaplar
+            % belirtilen aralıkta verilmiş bir değerin belirtilen başka bir aralıkta ki değerini hesaplar.
+            % (bkz. arduino map fonksiyonu)
             value = (val - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
         end
         
