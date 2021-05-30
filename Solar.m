@@ -1,5 +1,4 @@
 classdef Solar < handle
-    %SOLAR Apparent daily path of the sun
     %   Solar Altitude ve Solar Azimuth değerlerini hesaplayan sınıf
     %   Solar Altitude -> sin(α) = sin(L)sin(δ)+cos(L)cos(δ)cos(h)
     %           α -> Solar Altitude
@@ -24,7 +23,6 @@ classdef Solar < handle
     
     methods
         function obj = Solar(ast, latitude)
-            %SOLAR Construct an instance of this class
             %   Bu sınıf AST nesnesi ve latitude değeri ile çalışabilir.
             obj.Latitude = latitude;
             obj.DayOfTheYear = ast.DayOfTheYear;
